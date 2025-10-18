@@ -1,80 +1,56 @@
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <limits>
 
-void merge(std::vector<int>& arr, int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+using namespace std;
 
-    std::vector<int> leftArr(n1), rightArr(n2);
+void dijkstra(int n, int start, vector<vector<pair<int,int>>>& grafo) {
+    vector<int> dist(n, numeric_limits<int>::max());
+    dist[start] = 0;
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+    pq.push({0, start});
 
-    // Copiar los datos a los subarreglos
-    for (int i = 0; i < n1; i++) {
-        leftArr[i] = arr[left + i];
-    }
-    for (int j = 0; j < n2; j++) {
-        rightArr[j] = arr[mid + 1 + j];
-    }
-
-    int i = 0, j = 0, k = left;
-    
-    // Fusionar los subarreglos
-    while (i < n1 && j < n2) {
-        if (leftArr[i] <= rightArr[j]) {
-            arr[k] = leftArr[i];
-            i++;
-        } else {
-            arr[k] = rightArr[j];
-            j++;
+    while(!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+        for (auto [v, peso] : grafo[u]) {
+            if (dist[u] + peso < dist[v]) {
+                dist[v] = dist[u] + peso;
+                pq.push({dist[v], v});
+            }
         }
-        k++;
     }
 
-    // Copiar los elementos restantes si los hay
-    while (i < n1) {
-        arr[k] = leftArr[i];
-        i++;
-        k++;
-    }
-
-    while (j < n2) {
-        arr[k] = rightArr[j];
-        j++;
-        k++;
-    }
-}
-
-void mergesort(std::vector<int>& arr, int left, int right) {
-    if (left < right) {
-        int mid = left + (right - left) / 2;
-
-        // Ordenar las dos mitades
-        mergesort(arr, left, mid);
-        mergesort(arr, mid + 1, right);
-
-        // Fusionar las mitades ordenadas
-        merge(arr, left, mid, right);
-    }
+    for (int i = 0; i < n; i++)
+        cout << "Distancia a nodo " << i << ": " << dist[i] << endl;
 }
 
 int main() {
-    std::vector<int> arr = {38, 27, 43, 3, 9, 82, 10};
+    int n = 5;
+    vector<vector<pair<int,int>>> grafo(n);
 
-    std::cout << "Arreglo original: ";
-    for (int num : arr) {
-        std::cout << num << " ";
-    }
-    std::cout << std::endl;
+    grafo[0].push_back({1, 10});
+    grafo[0].push_back({2, 3});
+    grafo[1].push_back({2, 1});
+    grafo[1].push_back({3, 2});
+    grafo[2].push_back({1, 4});
+    grafo[2].push_back({3, 8});
+    grafo[2].push_back({4, 2});
+    grafo[3].push_back({4, 7});
+    grafo[4].push_back({3, 9});
 
-    mergesort(arr, 0, arr.size() - 1);
-
-    std::cout << "Arreglo ordenado: ";
-    for (int num : arr) {
-        std::cout << num << " ";
-    }
-    std::cout << std::endl;
-
+    dijkstra(n, 0, grafo);
     return 0;
 }
+
+
+
+
+
+
+
+
 
 
 
