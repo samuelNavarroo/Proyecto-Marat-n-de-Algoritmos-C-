@@ -1,55 +1,37 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
 
-int knapsack(int capacidad, const std::vector<int>& pesos, const std::vector<int>& valores, int n) {
-    // Crear la tabla DP
-    std::vector<std::vector<int>> dp(n + 1, std::vector<int>(capacidad + 1, 0));
+vector<vector<int>> adj;
+vector<int> vis;
 
-    // Llenar la tabla DP
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= capacidad; ++j) {
-            if (pesos[i - 1] <= j) {
-                // Si el objeto cabe en la mochila, decidir entre incluirlo o no
-                dp[i][j] = std::max(dp[i - 1][j], valores[i - 1] + dp[i - 1][j - pesos[i - 1]]);
-            } else {
-                // Si no cabe, no incluirlo
-                dp[i][j] = dp[i - 1][j];
-            }
-        }
-    }
-
-    return dp[n][capacidad];  // El valor máximo que se puede obtener
+void dfs(int u){
+    vis[u]=1;
+    for(int v:adj[u])
+        if(!vis[v]) dfs(v);
 }
 
-int main() {
-    int capacidad;
-    int n;
-
-    // Leer la capacidad de la mochila y el número de objetos
-    std::cout << "Ingresa la capacidad de la mochila: ";
-    std::cin >> capacidad;
-    std::cout << "Ingresa el número de objetos: ";
-    std::cin >> n;
-
-    std::vector<int> pesos(n), valores(n);
-
-    // Leer los pesos y valores de los objetos
-    std::cout << "Ingresa los pesos de los objetos:\n";
-    for (int i = 0; i < n; ++i) {
-        std::cin >> pesos[i];
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m;cin>>n>>m;
+    adj.assign(n,{});
+    for(int i=0;i<m;++i){
+        int u,v;cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-
-    std::cout << "Ingresa los valores de los objetos:\n";
-    for (int i = 0; i < n; ++i) {
-        std::cin >> valores[i];
-    }
-
-    // Resolver el problema de la mochila
-    int resultado = knapsack(capacidad, pesos, valores, n);
-    
-    // Mostrar el resultado
-    std::cout << "El valor máximo que se puede obtener es: " << resultado << std::endl;
-
-    return 0;
+    vis.assign(n,0);
+    int comps=0;
+    for(int i=0;i<n;++i)
+        if(!vis[i]){ dfs(i); comps++; }
+    cout<<comps<<"\n";
 }
+
+
+
+
+
+
+
+
 

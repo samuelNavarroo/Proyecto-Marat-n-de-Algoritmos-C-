@@ -1,51 +1,34 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
-#include <iostream>
-#include <vector>
 
-// Función para realizar el particionado
-int partition(std::vector<int>& arr, int low, int high) {
-    int pivot = arr[high];  // Tomamos el último elemento como pivote
-    int i = low - 1;        // Índice del menor elemento
+vector<vector<int>> adj;
+vector<int> disc, low, vis;
+int timer=0;
 
-    // Recorremos el arreglo y reordenamos
-    for (int j = low; j < high; ++j) {
-        if (arr[j] <= pivot) {
-            ++i;
-            std::swap(arr[i], arr[j]);  // Intercambiamos los elementos
-        }
-    }
-    std::swap(arr[i + 1], arr[high]);  // Colocamos el pivote en su posición final
-    return i + 1;
-}
-
-// Función recursiva que ordena el arreglo usando Quicksort
-void quicksort(std::vector<int>& arr, int low, int high) {
-    if (low < high) {
-        int pi = partition(arr, low, high);  // Encuentra la posición del pivote
-
-        // Ordenamos recursivamente las sublistas a la izquierda y derecha del pivote
-        quicksort(arr, low, pi - 1);
-        quicksort(arr, pi + 1, high);
+void dfs(int u,int p){
+    vis[u]=1;
+    disc[u]=low[u]=++timer;
+    for(int v:adj[u]){
+        if(v==p) continue;
+        if(!vis[v]){
+            dfs(v,u);
+            low[u]=min(low[u],low[v]);
+            if(low[v]>disc[u])
+                cout<<"Puente: "<<u<<" - "<<v<<"\n";
+        } else low[u]=min(low[u],disc[v]);
     }
 }
 
-int main() {
-    std::vector<int> arr = {10, 7, 8, 9, 1, 5};
-
-    std::cout << "Arreglo original: ";
-    for (int num : arr) {
-        std::cout << num << " ";
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m;cin>>n>>m;
+    adj.assign(n,{});
+    for(int i=0;i<m;++i){
+        int u,v;cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    std::cout << std::endl;
-
-    quicksort(arr, 0, arr.size() - 1);
-
-    std::cout << "Arreglo ordenado: ";
-    for (int num : arr) {
-        std::cout << num << " ";
-    }
-    std::cout << std::endl;
-
-    return 0;
+    disc.assign(n,0); low.assign(n,0); vis.assign(n,0);
+    for(int i=0;i<n;++i) if(!vis[i]) dfs(i,-1);
 }

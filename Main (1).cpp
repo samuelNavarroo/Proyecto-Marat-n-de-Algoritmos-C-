@@ -1,100 +1,36 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
-#include <iostream>
-#include <string>
-using namespace std;
+const long long INF=1e15;
 
-class CuentaBancaria {
-private:
-    string titular;
-    float saldo;
-
-public:
-    // Constructor
-    CuentaBancaria(string nombre, float saldoInicial) {
-        titular = nombre;
-        saldo = saldoInicial;
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m;cin>>n>>m;
+    vector<vector<pair<int,int>>> adj(n);
+    for(int i=0;i<m;++i){
+        int u,v,w;cin>>u>>v>>w;
+        adj[u].push_back({v,w});
     }
-
-    // Depositar dinero
-    void depositar(float monto) {
-        if (monto <= 0) {
-            cout << "❌ El monto debe ser mayor a 0.\n";
-            return;
-        }
-        saldo += monto;
-        cout << "✅ Se depositaron $" << monto << " correctamente.\n";
+    int s;cin>>s;
+    vector<int> indeg(n,0);
+    for(auto &vec:adj) for(auto [v,_]:vec) indeg[v]++;
+    queue<int> q;
+    for(int i=0;i<n;++i) if(!indeg[i]) q.push(i);
+    vector<int> topo;
+    while(!q.empty()){
+        int u=q.front();q.pop();
+        topo.push_back(u);
+        for(auto [v,_]:adj[u]) if(--indeg[v]==0) q.push(v);
     }
-
-    // Retirar dinero
-    void retirar(float monto) {
-        if (monto <= 0) {
-            cout << "❌ El monto debe ser mayor a 0.\n";
-            return;
-        }
-        if (monto > saldo) {
-            cout << "❌ Saldo insuficiente. Operación cancelada.\n";
-        } else {
-            saldo -= monto;
-            cout << "✅ Se retiraron $" << monto << " correctamente.\n";
-        }
-    }
-
-    // Mostrar saldo
-    void mostrarSaldo() const {
-        cout << "💳 Titular: " << titular << endl;
-        cout << "💰 Saldo actual: $" << saldo << endl;
-    }
-};
-
-int main() {
-    string nombre;
-    float saldoInicial;
-
-    cout << "=== 🏦 Sistema de Cuenta Bancaria 🏦 ===\n";
-    cout << "Ingrese el nombre del titular: ";
-    getline(cin, nombre);
-    cout << "Ingrese el saldo inicial: $";
-    cin >> saldoInicial;
-
-    CuentaBancaria cuenta(nombre, saldoInicial);
-
-    int opcion;
-    do {
-        cout << "\n📋 MENU DE OPCIONES\n";
-        cout << "1. Consultar saldo\n";
-        cout << "2. Depositar dinero\n";
-        cout << "3. Retirar dinero\n";
-        cout << "4. Salir\n";
-        cout << "Seleccione una opción: ";
-        cin >> opcion;
-
-        switch (opcion) {
-        case 1:
-            cuenta.mostrarSaldo();
-            break;
-        case 2: {
-            float monto;
-            cout << "Ingrese el monto a depositar: $";
-            cin >> monto;
-            cuenta.depositar(monto);
-            break;
-        }
-        case 3: {
-            float monto;
-            cout << "Ingrese el monto a retirar: $";
-            cin >> monto;
-            cuenta.retirar(monto);
-            break;
-        }
-        case 4:
-            cout << "👋 Saliendo del sistema...\n";
-            break;
-        default:
-            cout << "❌ Opción inválida. Intente de nuevo.\n";
-        }
-    } while (opcion != 4);
-
-    return 0;
+    vector<long long> dist(n,INF);
+    dist[s]=0;
+    for(int u:topo)
+        if(dist[u]<INF)
+            for(auto [v,w]:adj[u])
+                dist[v]=min(dist[v],dist[u]+w);
+    for(long long d:dist)
+        cout<<(d==INF?"INF":to_string(d))<<" ";
+    cout<<"\n";
 }
+
 

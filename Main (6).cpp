@@ -1,40 +1,40 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
-#include <iostream>
-#include <map>
-#include <sstream>
-#include <cctype>
 
-void contarFrecuenciaPalabras(const std::string& texto) {
-    std::map<std::string, int> frecuencia;
-    std::stringstream ss(texto);
-    std::string palabra;
+int n,m;
+vector<string> grid;
+vector<vector<int>> vis;
+int dx[4]={1,-1,0,0}, dy[4]={0,0,1,-1};
 
-    // Leer cada palabra del texto
-    while (ss >> palabra) {
-        // Convertir la palabra a minúsculas
-        for (char& c : palabra) {
-            c = std::tolower(c); // Convertir a minúscula
-        }
-        // Incrementar la frecuencia de la palabra
-        frecuencia[palabra]++;
-    }
-
-    // Mostrar las palabras y su frecuencia
-    std::cout << "Frecuencia de palabras:\n";
-    for (const auto& par : frecuencia) {
-        std::cout << par.first << ": " << par.second << std::endl;
+void dfs(int x,int y){
+    vis[x][y]=1;
+    for(int k=0;k<4;++k){
+        int nx=x+dx[k], ny=y+dy[k];
+        if(nx>=0&&ny>=0&&nx<n&&ny<m&&!vis[nx][ny]&&grid[nx][ny]=='1')
+            dfs(nx,ny);
     }
 }
 
-int main() {
-    std::string texto;
-    
-    // Leer todo el texto de la entrada estándar
-    std::cout << "Ingresa un texto (fin con Enter vacío):\n";
-    std::getline(std::cin, texto);
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin>>n>>m;
+    grid.resize(n);
+    for(int i=0;i<n;++i) cin>>grid[i];
+    vis.assign(n,vector<int>(m,0));
+    int islands=0;
+    for(int i=0;i<n;++i)
+        for(int j=0;j<m;++j)
+            if(!vis[i][j]&&grid[i][j]=='1'){
+                dfs(i,j);
+                islands++;
+            }
+    cout<<islands<<"\n";
+}
 
-    contarFrecuenciaPalabras(texto);
 
-    return 0;
-}¨
+
+
+
+
+

@@ -1,31 +1,28 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-    int n;
+vector<vector<int>> adj;
+vector<int> vis;
+bool cycle=false;
 
-    cout << "Ingrese tamaño del conjunto: ";
-    cin >> n;
-
-    if (n <= 0) {
-        cout << "Tamaño inválido." << endl;
-        return 1;
+void dfs(int u,int p){
+    vis[u]=1;
+    for(int v:adj[u]){
+        if(!vis[v]) dfs(v,u);
+        else if(v!=p) cycle=true;
     }
-
-    int numeros[n];
-    cout << "Ingrese número 1: ";
-    cin >> numeros[0];
-    int mayor = numeros[0];
-
-    for (int i = 1; i < n; ++i) {
-        cout << "Ingrese número " << i+1 << ": ";
-        cin >> numeros[i];
-        if (numeros[i] > mayor) {
-            mayor = numeros[i];
-        }
-    }
-
-    cout << "El número mayor es: " << mayor << endl;
-
-    return 0;
 }
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m;cin>>n>>m;
+    adj.assign(n,{});
+    for(int i=0;i<m;++i){
+        int u,v;cin>>u
+
+
+
+
+
+
